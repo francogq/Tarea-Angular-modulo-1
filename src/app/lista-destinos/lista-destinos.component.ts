@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {DestinoViaje} from '../models/destino-viaje';
 import {DestinoApiViaje} from '../models/destino-api-viaje'
 
+
 @Component({
   selector: 'app-lista-destinos',
   templateUrl: './lista-destinos.component.html',
@@ -11,7 +12,7 @@ export class ListaDestinosComponent implements OnInit {
   //destinos:DestinoViaje[];
   destinosApiClient= new DestinoApiViaje(); 
   @Output() onItemAdded:EventEmitter<DestinoViaje>;
-  constructor() {
+  constructor( ) {
       this.onItemAdded=new EventEmitter();     
     //this.destinos=[];
   }
