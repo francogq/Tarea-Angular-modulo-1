@@ -1,6 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {DestinoViaje} from '../models/destino-viaje';
 import {DestinoApiViaje} from '../models/destino-api-viaje'
+import { Store, State } from '@ngrx/store';
+import { AppState } from '../app.module';
+import { ElegidoFavoritoAction, NuevoDestinoAction } from '../models/destinos-viajes-state';
 
 
 @Component({
@@ -10,35 +13,33 @@ import {DestinoApiViaje} from '../models/destino-api-viaje'
 })
 export class ListaDestinosComponent implements OnInit {
   //destinos:DestinoViaje[];
-  destinosApiClient= new DestinoApiViaje(); 
+  //destinosApiClient:DestinoApiViaje; 
   @Output() onItemAdded:EventEmitter<DestinoViaje>;
-  constructor( ) {
-      this.onItemAdded=new EventEmitter();     
-    //this.destinos=[];
+  updates:string[];
+  all;
+
+  constructor(private destinosApiClient:DestinoApiViaje,private store:Store<AppState> ) {
+    this.onItemAdded = new EventEmitter();
+    this.updates = [];
+    this.store.select(state => state.destinos.favorito).subscribe(d =>{
+      if (d != null){
+        this.updates.push('se ha elegido a ' + d.nombre);
+      }
+    });
+    this.all =  store.select(state => state.destinos.items).subscribe(items => this.all = items);
   }
 
   ngOnInit(): void {
   }
-  /*
-  guardar(nombre:string,url:string):boolean{
-    this.destinos.push(new DestinoViaje(nombre,url));
-    console.log(this.destinos);
-    return false;
-  }
-  elegido(d:DestinoViaje){
-    this.destinos.forEach(function (x){x.setSelected(false)});//ponemos todos false
-    d.setSelected(true); //escogemos un selecionado
- }*/
-  
-  agregado(d:DestinoViaje){
-    this.destinosApiClient.add(d);
-    this.onItemAdded.emit(d);
-  
-  }
-  elegido(e:DestinoViaje){
-    this.destinosApiClient.getAll().forEach(function (x){x.setSelected(false)});//ponemos todos false
-    e.setSelected(true); //escogemos un selecionado
-  }
 
+  agregado(t: DestinoViaje){
+    this.destinosApiClient.add(t);
+    this.onItemAdded.emit(t);
+  }
+  elegido(d: DestinoViaje){
+    this.destinosApiClient.elegir(d);
+  }
+  getAll(){
 
+  }
 }
